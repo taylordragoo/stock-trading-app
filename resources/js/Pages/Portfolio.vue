@@ -55,8 +55,10 @@ export default defineComponent({
                 });
         },
         async activate(ticker) {
-            this.active = ticker;
+            this.searchQuery = ticker;
             await this.searchStocks();
+            const selectedStock = this.searchResults.find(stock => stock.ticker === ticker);
+            this.active = selectedStock;
         },
         consolidateStockIds() {
             // Concatenate the portfolio and watchlist arrays
