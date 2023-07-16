@@ -20,6 +20,7 @@ export default defineComponent({
             wallet: this.$page.props.userWallet,
             searchResults: [],
             active: null,
+            loading: false
         }
     },
     methods: {
@@ -31,6 +32,7 @@ export default defineComponent({
                         .then(response => {
                             this.searchResults = response.data;
                             console.log("Search: " + this.searchResults);
+                            this.loading = false
                         })
                         .catch(error => {
                             console.error('Error searching stocks:', error);
@@ -90,7 +92,7 @@ export default defineComponent({
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="t in transactions">
+                            <tr v-if="!loading" v-for="t in transactions">
                                 <td class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
                                     <div class="px-2 py-1">
                                         <div class="text-center">
@@ -121,6 +123,13 @@ export default defineComponent({
                                     <button @click="activate(t.stock_id)" type="button" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                         View
                                     </button>
+                                </td>
+                            </tr>
+                            <tr v-else>
+                                <td colspan="7" class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
+                                    <div class="px-2 py-1">
+                                        <div class="text-center"></div>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>

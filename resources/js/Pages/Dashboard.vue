@@ -20,7 +20,8 @@ export default defineComponent({
             wallet: this.$page.props.userWallet,
             searchResults: [],
             active: null,
-            stocksData: {}
+            stocksData: {},
+            loading: true
         }
     },
     methods: {
@@ -49,6 +50,7 @@ export default defineComponent({
             axios.post('/api/stocks/bulk-snapshots', { tickers })
                 .then(response => {
                     this.stocksData = response.data;
+                    this.loading = false;
                 })
                 .catch(error => {
                     console.error(error);

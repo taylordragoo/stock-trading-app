@@ -20,35 +20,37 @@ export default defineComponent({
             portfolio: this.$page.props.userPortfolio,
             watchlist: this.$page.props.userWatchlist,
             wallet: this.$page.props.userWallet,
-            stocksData: {}
+            stocksData: {},
+            loading: true
         }
     },
     methods: {
         async searchStocks() {
             if (this.searchQuery && this.searchQuery.length > 0) {
+                console.log(this.loading)
                 try {
                     axios.defaults.headers.common = {};
-                    const response = await axios.get(`/api/search/${this.searchQuery}`)
-                        .then(response => {
-                            this.searchResults = response.data;
-                            console.log(this.searchResults);
-                        })
-                        .catch(error => {
-                            console.error('Error searching stocks:', error);
-                        });
-
+                    const response = await axios.get(`/api/search/${this.searchQuery}`);
+                    this.searchResults = response.data;
+                    console.log(this.searchResults);
                 } catch (error) {
                     console.error('Error searching stocks:', error);
+                } finally {
+                    this.loading = false;
+                    console.log(this.loading)
                 }
             } else {
                 this.searchResults = [];
+                this.loading = false;
             }
         },
         getBulkSnapshots() {
+            console.log("getBulkSnapshots")
             const tickers = this.consolidateStockIds();
             axios.post('/api/stocks/bulk-snapshots', { tickers })
                 .then(response => {
                     this.stocksData = response.data;
+                    this.loading = false;
                 })
                 .catch(error => {
                     console.error(error);
@@ -189,7 +191,7 @@ export default defineComponent({
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="t in mappedStockData">
+                            <tr v-if="!loading" v-for="t in mappedStockData">
                                 <td class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
                                     <div class="px-2 py-1">
                                         <div class="text-center">
@@ -223,6 +225,13 @@ export default defineComponent({
                                     <button @click="activate(t.stock_id)" type="button" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                         View
                                     </button>
+                                </td>
+                            </tr>
+                            <tr v-else>
+                                <td colspan="8" class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
+                                    <div class="px-2 py-1">
+                                        <div class="text-center"></div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
