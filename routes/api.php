@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,21 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/search/{query}', [StockController::class, 'searchStocks']);
+
+Route::get('/snapshot/{ticker}', [StockController::class, 'getSnapshot']);
+
+Route::get('/details/{ticker}', [StockController::class, 'getDetails']);
+
+Route::get('/historical/{ticker}', [StockController::class, 'getHistorical']);
+
+Route::post('/stocks/buy', [StockController::class, 'buyStock']);
+
+Route::post('/stocks/sell', [StockController::class, 'sellStock']);
+
+Route::post('/watchlist/add', [StockController::class, 'addToWatchlist']);
+
+Route::get('/wallet', [WalletController::class, 'getWallet']);
+
+Route::post('/stocks/bulk-snapshots', [StockController::class, 'getBulkSnapshots']);

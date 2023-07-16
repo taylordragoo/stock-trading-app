@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Inertia::share([
+            'userWallet' => function () {
+                return auth()->user()?->wallet;
+            },
+            'userPortfolio' => function () {
+                return auth()->user()?->portfolio;
+            },
+            'userTransactions' => function () {
+                return auth()->user()?->transactions;
+            },
+            'userWatchlist' => function () {
+                return auth()->user()?->watchlist;
+            },
+        ]);
     }
 }

@@ -6,13 +6,14 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Footer from "@/Components/Footer.vue";
 
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen flex flex-col bg-gray-100">
+        <div>
             <nav class="bg-white border-b border-gray-100">
                 <!-- region Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,17 +33,17 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('stocks')">
+                                <NavLink :href="route('portfolio')" :active="route().current('portfolio')">
                                     Portfolio
                                 </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('markets')">
+                                <NavLink :href="route('watchlist')" :active="route().current('watchlist')">
                                     Watchlist
                                 </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('markets')">
-                                    Buy/Sell
-                                </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('markets')">
+                                <NavLink :href="route('orders')" :active="route().current('orders')">
                                     Orders
+                                </NavLink>
+                                <NavLink :href="route('buy-sell')" :active="route().current('buy-sell')">
+                                    Buy/Sell
                                 </NavLink>
                             </div>
                         </div>
@@ -155,10 +156,13 @@ const showingNavigationDropdown = ref(false);
                 </div>
             </header>
 
+            <div class="flex-grow">
             <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+                <main>
+                    <slot />
+                </main>
+            </div>
         </div>
+        <Footer/>
     </div>
 </template>

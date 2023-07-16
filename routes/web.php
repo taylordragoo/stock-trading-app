@@ -29,6 +29,26 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/portfolio', function () {
+    return Inertia::render('Portfolio');
+})->middleware(['auth', 'verified'])->name('portfolio');
+
+Route::get('/watchlist', function () {
+    return Inertia::render('Watchlist');
+})->middleware(['auth', 'verified'])->name('watchlist');
+
+Route::get('/buy-sell', function () {
+    return Inertia::render('BuySell');
+})->middleware(['auth', 'verified'])->name('buy-sell');
+
+Route::get('/orders', function () {
+    return Inertia::render('Orders');
+})->middleware(['auth', 'verified'])->name('orders');
+
+Route::get('/company', function () {
+    return Inertia::render('Company');
+})->middleware(['auth', 'verified'])->name('company');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

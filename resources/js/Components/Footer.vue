@@ -1,5 +1,5 @@
 <template>
-    <footer class="fixed bottom-0 w-full bg-white shadow light:bg-gray-900">
+    <footer class="bottom-0 w-full bg-white shadow light:bg-gray-900">
         <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
             <div class="sm:flex sm:items-center sm:justify-between">
                 <a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0">
@@ -36,5 +36,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+footer {
+    margin-top: auto;
+}
 </style>
