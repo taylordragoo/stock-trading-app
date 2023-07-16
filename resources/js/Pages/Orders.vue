@@ -13,7 +13,7 @@ export default defineComponent({
     },
     data() {
         return {
-            searchQuery: 'AAPL',
+            searchQuery: '',
             transactions: this.$page.props.userTransactions,
             portfolio: this.$page.props.userPortfolio,
             watchlist: this.$page.props.userWatchlist,
@@ -44,6 +44,7 @@ export default defineComponent({
             }
         },
         async activate(ticker) {
+            this.searchQuery = ticker;
             await this.searchStocks();
             const selectedStock = this.searchResults.find(stock => stock.ticker === ticker);
             this.active = selectedStock;
