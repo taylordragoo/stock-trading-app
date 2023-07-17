@@ -39,10 +39,10 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('watchlist')" :active="route().current('watchlist')">
                                     Watchlist
                                 </NavLink>
-                                <NavLink :href="route('orders')" :active="route().current('orders')">
+                                <NavLink :href="route('transactions')" :active="route().current('transactions')">
                                     Transactions
                                 </NavLink>
-                                <NavLink :href="route('buy-sell')" :active="route().current('buy-sell')">
+                                <NavLink :href="route('search')" :active="route().current('search')">
                                     Search
                                 </NavLink>
                             </div>

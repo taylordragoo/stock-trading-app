@@ -65,11 +65,11 @@ export default defineComponent({
 </script>
 
 <template>
-    <Head title="Orders" />
+    <Head title="Transactions" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Orders</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Transactions</h2>
         </template>
 
         <div v-if="active === null" class="p-8 mx-auto max-w-screen-xl items-center flex">

@@ -6,7 +6,6 @@ import {defineComponent} from "vue";
 import VueApexCharts from 'vue3-apexcharts'
 import moment from "moment";
 import { useToast } from "vue-toastification";
-import {router} from "@inertiajs/vue3";
 
 export default defineComponent({
     components: {
@@ -18,6 +17,9 @@ export default defineComponent({
         return {
             active: this.ticker,
             user: this.$page.props.auth.user,
+            transactions: this.$page.props.userTransactions,
+            portfolio: this.$page.props.userPortfolio,
+            watchlist: this.$page.props.userWatchlist,
             searchQuery: '',
             toast: useToast(),
             company: null,
@@ -98,18 +100,6 @@ export default defineComponent({
                         bottom: 15
                     }
                 },
-                series: [
-                    {
-                        name: 'Revenue',
-                        data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
-                        color: '#1A56DB'
-                    },
-                    {
-                        name: 'Revenue (previous period)',
-                        data: [6556, 6725, 6424, 6356, 6586, 6756, 6616],
-                        color: '#FDBA8C'
-                    }
-                ],
                 markers: {
                     size: 5,
                     strokeColors: '#ffffff',
@@ -118,6 +108,18 @@ export default defineComponent({
                         sizeOffset: 3
                     }
                 },
+                series: [
+                    {
+                        name: 'Revenue',
+                        data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
+                        color: '#1A56DB'
+                    },
+                    // {
+                    //     name: 'Revenue (previous period)',
+                    //     data: [6556, 6725, 6424, 6356, 6586, 6756, 6616],
+                    //     color: '#FDBA8C'
+                    // }
+                ],
                 xaxis: {
                     categories: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb'],
                     labels: {
@@ -227,6 +229,9 @@ export default defineComponent({
         closeCompany() {
             this.$emit('close');
         },
+        reloadSnapshots() {
+            this.$emit('reload-snapshots');
+        },
         calculateDateRange(range) {
             this.end_date = moment().format('YYYY-MM-DD'); // end date is always today
 
@@ -253,6 +258,7 @@ export default defineComponent({
                 if (response.data.success) {
                     this.toast.success('Successfully added to watchlist!');
                     console.log('Stock added to watchlist');
+                    this.reloadSnapshots();
                 } else {
                     this.toast.error('Item already on watchlist.')
                     console.log('Failed to add to watchlist');
@@ -260,6 +266,33 @@ export default defineComponent({
             } catch (error) {
                 console.error('Error adding to watchlist:', error);
             }
+        },
+        async removeFromWatchlist() {
+            try {
+                console.log('Removing from watchlist');
+                const response = await axios.post(`/api/watchlist/remove`, {
+                    stock_id: this.active.ticker,
+                    user_id: this.user.id
+                });
+
+                if (response.data.success) {
+                    this.toast.success('Successfully removed from watchlist!');
+                    console.log('Stock removed from watchlist');
+                    this.removeItemFromWatchlistArray(this.active.ticker);
+                    this.reloadSnapshots();
+                } else {
+                    this.toast.error('Item not on watchlist.')
+                    console.log('Failed to add to watchlist');
+                }
+            } catch (error) {
+                console.error('Error removing from watchlist:', error);
+            }
+        },
+        removeItemFromWatchlistArray(stockIdToRemove) {
+            this.watchlist = this.watchlist.filter(stock => stock.stock_id !== stockIdToRemove);
+        },
+        addItemToWatchlistArray(stockIdToAdd) {
+            this.watchlist.push(stockIdToAdd);
         },
         async buyStock() {
             try {
@@ -274,7 +307,8 @@ export default defineComponent({
                     this.toast.success('Successfully bought!');
                     console.log('Stock bought');
                     this.buy_modal = false;
-                    this.$inertia.get('/portfolio');
+                    this.reloadSnapshots();
+                    // this.$inertia.get('/portfolio');
                 } else {
                     this.toast.error('Something went wrong buying!')
                     console.log('Failed to buy stock');
@@ -295,7 +329,8 @@ export default defineComponent({
                     this.toast.success('Successfully sold!');
                     console.log('Stock sold');
                     this.sell_modal = false;
-                    this.$inertia.get('/portfolio');
+                    this.reloadSnapshots();
+                    // this.$inertia.get('/portfolio');
                 } else {
                     this.toast.error('Something went wrong selling!')
                     console.log('Failed to sell stock');
@@ -303,16 +338,22 @@ export default defineComponent({
             } catch (error) {
                 console.error('Error selling stock:', error);
             }
-        }
+        },
+        consolidateWatchlistStockIds() {
+            // Concatenate the portfolio and watchlist arrays
+            let allStocks = this.watchlist;
 
+            // Create a new array containing only unique stock_ids
+            let uniqueStockIds = [...new Set(allStocks.map(item => item.stock_id))];
+
+            return uniqueStockIds;
+        }
     },
     watch: {
-        watch: {
-            date_range: function(newVal, oldVal) {
+        date_range: function(newVal, oldVal) {
                 this.getHistorical();
                 this.calculateDateRange(newVal);
-            }
-        },
+        }
     },
     computed: {
         total_price() {
@@ -325,12 +366,20 @@ export default defineComponent({
             const balance = parseFloat(this.wallet.balance);
             const totalPrice = parseFloat(this.total_price);
             return parseFloat((balance + totalPrice).toFixed(2));
+        },
+        portfolio_watchlist_stocks() {
+            return this.consolidateWatchlistStockIds();
+        },
+        onWatchlist() {
+            return !!this.portfolio_watchlist_stocks.includes(this.active.ticker);
         }
     },
     mounted() {
         this.calculateDateRange(this.date_range);
         this.getSnapshot();
         this.options = this.getMainChartOptions();
+        const chart = new ApexCharts(document.getElementById('main-chart'), this.options);
+        chart.render();
     }
 })
 
@@ -343,8 +392,11 @@ export default defineComponent({
             <div class="flex justify-between items-center">
                 <h2 class="font-semibold px-4 text-xl text-gray-800 leading-tight">{{ this.active.name ?? '' }}</h2>
                 <div class="flex space-x-4">
-                    <button @click="addToWatchlist" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                        Add to Watchlist
+                    <button v-if="!onWatchlist" @click="addToWatchlist" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                        Add Watchlist
+                    </button>
+                    <button v-if="onWatchlist" @click="removeFromWatchlist" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                        Remove Watchlist
                     </button>
                     <button @click="buy_modal = true" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                         Buy
@@ -379,7 +431,7 @@ export default defineComponent({
                     </svg>
                 </div>
             </div>
-<!--            <div id="main-chart"></div>-->
+            <div id="main-chart"></div>
 <!--            <apexchart type="line" :options="chartOptions" :series="series"></apexchart>-->
             <div class="flex justify-between items-center pt-3 mt-5 border-t border-gray-200 sm:pt-6">
                 <div>

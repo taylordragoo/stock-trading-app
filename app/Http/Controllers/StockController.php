@@ -3,22 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
-use App\Models\Stock;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Watchlist;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Client;
-use GuzzleHttp\Promise\Utils;
 
 class StockController extends Controller
 {
-    public function addToWatchlist(Request $request)
+    public function addToWatchlist(Request $request): JsonResponse
     {
         $request->validate([
             'stock_id' => 'unique:watchlists,stock_id',
@@ -34,6 +30,21 @@ class StockController extends Controller
         }
 
         return response()->json(['success' => 'Stock successfully added to watchlist']);
+    }
+
+    public function removeFromWatchlist(Request $request): JsonResponse
+    {
+        $item = Watchlist::where('user_id', request()->user_id)
+            ->where('stock_id', request()->stock_id)
+            ->first();
+
+        try {
+            $item->delete();
+        } catch (GuzzleException $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+
+        return response()->json(['success' => 'Stock removed from watchlist']);
     }
 
     public function buyStock(Request $request): JsonResponse
@@ -85,11 +96,9 @@ class StockController extends Controller
 
     public function sellStock(Request $request): JsonResponse
     {
-        Log::info(request()->user_id);
         $user = User::where('id', request()->user_id)
             ->with('wallet', 'portfolio', 'transactions', 'watchlist')
             ->first();
-        Log::info($user);
         $wallet = $user->wallet;
         $stock_id = request()->stock_id;
         $quantity = request()->quantity;

@@ -183,7 +183,7 @@ export default defineComponent({
         </template>
 
         <div class="p-8 w-full items-center flex">
-            <div class="w-full sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+            <div v-if="!loading" class="w-full sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                 <div class="flex-auto p-4">
                     <div class="flex flex-row -mx-3">
                         <div class="flex-none w-2/3 max-w-full px-3">
@@ -205,7 +205,30 @@ export default defineComponent({
                     </div>
                 </div>
             </div>
-            <div class="w-full ml-3 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+            <div v-else class="w-full sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal uppercase text-sm">Portfolio</p>
+                                <p class="mb-0 dark:opacity-60">Total Value</p>
+                                <h5 class="mb-2 font-bold">&nbsp;</h5>
+                                <p class="mb-0 dark:opacity-60">
+                                    <span class="font-bold leading-normal text-sm text-emerald-500">+64.25 +0.45%</span>
+                                </p>
+                                <p class="mb-0 dark:opacity-60">Volume: &nbsp;</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
+                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!loading" class="w-full ml-3 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                 <div class="flex-auto p-4">
                     <div class="flex flex-row -mx-3">
                         <div class="flex-none w-2/3 max-w-full px-3">
@@ -227,7 +250,30 @@ export default defineComponent({
                     </div>
                 </div>
             </div>
-            <div class="w-full ml-5 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+            <div v-else class="w-full ml-3 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal uppercase text-sm">Wallet</p>
+                                <p class="mb-0 dark:opacity-60">Balance</p>
+                                <h5 class="mb-2 font-bold">&nbsp;</h5>
+                                <p class="mb-0 dark:opacity-60">
+                                    <span class="font-bold leading-normal text-sm text-emerald-500">+64.25 +0.45%</span>
+                                </p>
+                                <p class="mb-0 dark:opacity-60">&nbsp;</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
+                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!loading" class="w-full ml-5 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
                 <div class="flex-auto p-4">
                     <div class="flex flex-row -mx-3">
                         <div class="flex-none w-2/3 max-w-full px-3">
@@ -249,6 +295,29 @@ export default defineComponent({
                     </div>
                 </div>
             </div>
+            <div v-else class="w-full ml-5 sm:w-1/3 relative flex flex-col min-w-0 break-words bg-white shadow-md dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal uppercase text-sm">COMP</p>
+                                <p class="mb-0 dark:opacity-60">NASDAQ Composite Index</p>
+                                <h5 class="mb-2 font-bold">14,202.82</h5>
+                                <p class="mb-0 dark:opacity-60">
+                                    <span class="font-bold leading-normal text-sm text-emerald-500">+64.25 +0.45%</span>
+                                </p>
+                                <p class="mb-0 dark:opacity-60">Volume: 753,565,851</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
+                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="pr-8 pb-8 pl-8 flex">
@@ -261,7 +330,7 @@ export default defineComponent({
                     </a>
                 </div>
                 <div class="bg-white overflow-hidden sm:rounded-lg">
-                    <ul role="list" class="divide-y divide-gray-100">
+                    <ul v-if="!loading" role="list" class="divide-y divide-gray-100">
                         <li v-for="p in mappedStockData.slice(0, 6)" :key="p.stock_id" class="py-3 sm:py-4">
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0"></div>
@@ -279,6 +348,71 @@ export default defineComponent({
                             </div>
                         </li>
                     </ul>
+                    <ul v-else role="list" class="divide-y divide-gray-100">
+                        <li class="py-3 sm:py-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
@@ -290,7 +424,7 @@ export default defineComponent({
                     </a>
                 </div>
                 <div class="bg-white overflow-hidden sm:rounded-lg">
-                    <ul role="list" class="divide-y divide-gray-100">
+                    <ul v-if="!loading" role="list" class="divide-y divide-gray-100">
                         <li v-for="p in mappedWatchlistData.slice(0, 6)" :key="p.stock_id" class="py-3 sm:py-4">
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0"></div>
@@ -308,18 +442,83 @@ export default defineComponent({
                             </div>
                         </li>
                     </ul>
+                    <ul v-else role="list" class="divide-y divide-gray-100">
+                        <li class="py-3 sm:py-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
             <div class="w-full ml-5 sm:w-1/3 bg-white border rounded-lg shadow lg:p-8">
                 <div class="flex items-center justify-between mb-4">
                     <h5 class="text-xl font-bold leading-none text-gray-800">Recent Transactions</h5>
-                    <a :href="route('orders')" class="text-sm font-medium text-blue-600 hover:underline">
+                    <a :href="route('transactions')" class="text-sm font-medium text-blue-600 hover:underline">
                         View all
                     </a>
                 </div>
                 <div class="bg-white overflow-hidden sm:rounded-lg">
-                    <ul role="list" class="divide-y divide-gray-100">
+                    <ul v-if="!loading" role="list" class="divide-y divide-gray-100">
                         <li v-for="p in transactions.slice(0, 6)" :key="p.stock_id" class="py-3 sm:py-4">
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0"></div>
@@ -337,6 +536,71 @@ export default defineComponent({
                                     </p>
                                     <p class="text-sm text-gray-500 truncate ">
                                         {{ p.price_per_stock }}
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul v-else role="list" class="divide-y divide-gray-100">
+                        <li class="py-3 sm:py-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
+                                    </p>
+                                </div>
+                                <div class="flex-2 pr-0 min-w-0 font-semibold text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        &nbsp;
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate ">
+                                        &nbsp;
                                     </p>
                                 </div>
                             </div>

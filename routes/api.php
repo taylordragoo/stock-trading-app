@@ -34,6 +34,8 @@ Route::post('/stocks/sell', [StockController::class, 'sellStock']);
 
 Route::post('/watchlist/add', [StockController::class, 'addToWatchlist']);
 
+Route::post('/watchlist/remove', [StockController::class, 'removeFromWatchlist']);
+
 Route::get('/wallet', [WalletController::class, 'getWallet']);
 
 Route::post('/stocks/bulk-snapshots', [StockController::class, 'getBulkSnapshots']);

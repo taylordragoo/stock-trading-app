@@ -37,13 +37,13 @@ Route::get('/watchlist', function () {
     return Inertia::render('Watchlist');
 })->middleware(['auth', 'verified'])->name('watchlist');
 
-Route::get('/buy-sell', function () {
-    return Inertia::render('BuySell');
-})->middleware(['auth', 'verified'])->name('buy-sell');
+Route::get('/search', function () {
+    return Inertia::render('Search');
+})->middleware(['auth', 'verified'])->name('search');
 
-Route::get('/orders', function () {
-    return Inertia::render('Orders');
-})->middleware(['auth', 'verified'])->name('orders');
+Route::get('/transactions', function () {
+    return Inertia::render('Transactions');
+})->middleware(['auth', 'verified'])->name('transactions');
 
 Route::get('/company', function () {
     return Inertia::render('Company');

@@ -231,6 +231,6 @@ export default defineComponent({
             </div>
         </div>
 
-        <Company v-if="active !== null" :wallet="this.$page.props.userWallet" :ticker="active" @close="active = null" />
+        <Company v-if="active !== null" :wallet="this.$page.props.userWallet" :ticker="active" @reload-snapshots="getBulkSnapshots" @close="active = null" />
     </AuthenticatedLayout>
 </template>

@@ -58,11 +58,11 @@ export default defineComponent({
 </script>
 
 <template>
-    <Head title="Buy & Sell" />
+    <Head title="Search" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Buy/Sell</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Search</h2>
         </template>
 
         <section v-if="active === null" class="p-3 sm:p-5">
