@@ -9,7 +9,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'Stock Trading Simulator';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
