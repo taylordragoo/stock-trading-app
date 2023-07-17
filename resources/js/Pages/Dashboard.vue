@@ -199,7 +199,7 @@ export default defineComponent({
                         </div>
                         <div class="px-3 text-right basis-1/3">
                             <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
-                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                                <i class="fa fa-dollar-sign text-lg relative top-3.5 text-white"></i>
                             </div>
                         </div>
                     </div>
@@ -221,7 +221,7 @@ export default defineComponent({
                         </div>
                         <div class="px-3 text-right basis-1/3">
                             <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
-                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                                <i class="fa fa-dollar-sign text-lg relative top-3.5 text-white"></i>
                             </div>
                         </div>
                     </div>
@@ -289,7 +289,7 @@ export default defineComponent({
                         </div>
                         <div class="px-3 text-right basis-1/3">
                             <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
-                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                                <i class="fa fa-arrow-trend-up text-lg relative top-3.5 text-white"></i>
                             </div>
                         </div>
                     </div>
@@ -311,7 +311,7 @@ export default defineComponent({
                         </div>
                         <div class="px-3 text-right basis-1/3">
                             <div class="inline-block w-12 h-12 text-center rounded-circle bg-gradient-to-tl from-blue-500 to-violet-500">
-                                <i class="fa fa-coins text-lg relative top-3.5 text-white"></i>
+                                <i class="fa fa-arrow-trend-up text-lg relative top-3.5 text-white"></i>
                             </div>
                         </div>
                     </div>

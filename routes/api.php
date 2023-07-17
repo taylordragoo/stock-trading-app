@@ -26,7 +26,7 @@ Route::get('/snapshot/{ticker}', [StockController::class, 'getSnapshot']);
 
 Route::get('/details/{ticker}', [StockController::class, 'getDetails']);
 
-Route::get('/historical/{ticker}', [StockController::class, 'getHistorical']);
+Route::get('/historical/{ticker}/{start_date}/{end_date}', [StockController::class, 'getHistorical']);
 
 Route::post('/stocks/buy', [StockController::class, 'buyStock']);
 

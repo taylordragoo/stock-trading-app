@@ -90,9 +90,8 @@ export default defineComponent({
                             <tr>
                                 <th scope="col" class="px-4 py-3">Company name</th>
                                 <th scope="col" class="px-4 py-3">Symbol</th>
-                                <th scope="col" class="px-4 py-3">Brand</th>
-                                <th scope="col" class="px-4 py-3">Description</th>
-                                <th scope="col" class="px-4 py-3">Price</th>
+                                <th scope="col" class="px-4 py-3">Locale</th>
+                                <th scope="col" class="px-4 py-3">Currency</th>
                                 <th scope="col" class="px-4 py-3">
                                     <span class="sr-only">Actions</span>
                                 </th>
@@ -109,9 +108,8 @@ export default defineComponent({
                                 <tr v-if="!loading" v-for="stock in searchResults" :key="stock.ticker" class="border-b">
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ stock.name }}</th>
                                     <td class="px-4 py-3">{{ stock.ticker }}</td>
-                                    <td class="px-4 py-3">{{ stock.market }}</td>
-                                    <td class="px-4 py-3">{{ stock.primary_exchange }}</td>
-                                    <td class="px-4 py-3">{{ stock.market_cap }}</td>
+                                    <td class="px-4 py-3">{{ stock.locale }}</td>
+                                    <td class="px-4 py-3">{{ stock.currency_name }}</td>
                                     <td class="px-4 py-3 flex items-center justify-center">
                                         <button @click="activate(stock.ticker)" type="button" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-blue-500 to-violet-500 leading-normal text-xs ease-in tracking-tight-rem shadow-xs bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                             View

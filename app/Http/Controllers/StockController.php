@@ -253,7 +253,7 @@ class StockController extends Controller
                 'query' => [
                     'adjusted' => 'true',
                     'sort' => 'asc',
-                    'limit' => '120',
+                    'limit' => '5000',
                     'apiKey' => env('POLYGON_API_KEY')
                 ]
             ]);

@@ -20,6 +20,7 @@ export default defineComponent({
             transactions: this.$page.props.userTransactions,
             portfolio: this.$page.props.userPortfolio,
             watchlist: this.$page.props.userWatchlist,
+            historicalData: [],
             searchQuery: '',
             toast: useToast(),
             company: null,
@@ -36,22 +37,7 @@ export default defineComponent({
             price: '',
             error: '',
             message: '',
-            start_date: null,
-            end_date: null,
             date_range: 'Last 30 Days',
-            series: [{
-                name: 'Historical',
-                data: []  // This will be populated with your historical data
-            }],
-            chartOptions: {
-                // Various options for the chart
-                chart: {
-                    id: 'vuechart-example'
-                },
-                xaxis: {
-                    categories: []  // This will be populated with the dates from your historical data
-                }
-            }
         }
     },
     methods: {
@@ -59,8 +45,8 @@ export default defineComponent({
             let mainChartColors = {
                 borderColor: '#F3F4F6',
                 labelColor: '#6B7280',
-                opacityFrom: 0.45,
-                opacityTo: 0,
+                opacityFrom: 0.7,
+                opacityTo: 0.7,
             }
 
             // Your chart options here...
@@ -111,17 +97,12 @@ export default defineComponent({
                 series: [
                     {
                         name: 'Revenue',
-                        data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
+                        data: [],
                         color: '#1A56DB'
-                    },
-                    {
-                        name: 'Revenue (previous period)',
-                        data: [6556, 6725, 6424, 6356, 6586, 6756, 6616],
-                        color: '#FDBA8C'
                     }
                 ],
                 xaxis: {
-                    categories: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb'],
+                    categories: [],
                     labels: {
                         style: {
                             colors: [mainChartColors.labelColor],
@@ -153,7 +134,7 @@ export default defineComponent({
                             fontWeight: 500,
                         },
                         formatter: function (value) {
-                            return '$' + value;
+                            return '$' + parseFloat(value).toFixed(2);
                         }
                     },
                 },
@@ -174,7 +155,7 @@ export default defineComponent({
                         options: {
                             xaxis: {
                                 labels: {
-                                    show: false
+                                    show: true
                                 }
                             }
                         }
@@ -215,13 +196,146 @@ export default defineComponent({
         },
         async getHistorical() {
             try {
-                let response = await axios.get(`/api/historical/${this.active.ticker}/${this.start_date}/${this.end_date}`);
+                let date = new Date(); // Get current date
+                date.setDate(date.getDate() - 1); // Set to yesterday's date
+
+                let end_date = date.toISOString().split('T')[0]; // Format it as YYYY-MM-DD
+
+                date.setDate(date.getDate() - 6); // Get the date 7 days ago from yesterday
+                let start_date = date.toISOString().split('T')[0]; // Format it as YYYY-MM-DD
+
+                let response = await axios.get(`/api/historical/${this.active.ticker}/${start_date}/${end_date}`);
                 this.historical = response.data.results;
                 console.log("Historical: " + this.historical);
 
+                let mainChartColors = {
+                    borderColor: '#F3F4F6',
+                    labelColor: '#6B7280',
+                    opacityFrom: 0.7,
+                    opacityTo: 0.7,
+                }
+
+                // Your chart options here...
+                let chartOptions = {
+                    chart: {
+                        height: 420,
+                        type: 'area',
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: mainChartColors.labelColor,
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            enabled: true,
+                            opacityFrom: mainChartColors.opacityFrom,
+                            opacityTo: mainChartColors.opacityTo
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true
+                    },
+                    tooltip: {
+                        style: {
+                            fontSize: '14px',
+                            fontFamily: 'Inter, sans-serif',
+                        },
+                    },
+                    grid: {
+                        show: true,
+                        borderColor: mainChartColors.borderColor,
+                        strokeDashArray: 1,
+                        padding: {
+                            left: 35,
+                            bottom: 15
+                        }
+                    },
+                    markers: {
+                        size: 5,
+                        strokeColors: '#ffffff',
+                        hover: {
+                            size: undefined,
+                            sizeOffset: 3
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Revenue',
+                            data: [],
+                            color: '#1A56DB'
+                        }
+                    ],
+                    xaxis: {
+                        categories: [],
+                        labels: {
+                            style: {
+                                colors: [mainChartColors.labelColor],
+                                fontSize: '14px',
+                                fontWeight: 500,
+                            },
+                        },
+                        axisBorder: {
+                            color: mainChartColors.borderColor,
+                        },
+                        axisTicks: {
+                            color: mainChartColors.borderColor,
+                        },
+                        crosshairs: {
+                            show: true,
+                            position: 'back',
+                            stroke: {
+                                color: mainChartColors.borderColor,
+                                width: 1,
+                                dashArray: 10,
+                            },
+                        },
+                    },
+                    yaxis: {
+                        decimalsInFloat: 2,
+                        show: false,
+                        labels: {
+                            style: {
+                                colors: [mainChartColors.labelColor],
+                                fontSize: '14px',
+                                fontWeight: 500,
+                            },
+                            formatter: function (value) {
+                                return '$' + value;
+                            }
+                        },
+                    },
+                    legend: {
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        fontFamily: 'Inter, sans-serif',
+                        labels: {
+                            colors: [mainChartColors.labelColor]
+                        },
+                        itemMargin: {
+                            horizontal: 10
+                        }
+                    },
+                    responsive: [
+                        {
+                            breakpoint: 1024,
+                            options: {
+                                xaxis: {
+                                    labels: {
+                                        show: true
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+
                 // Populate the series data and xaxis categories
-                // this.series[0].data = this.historicalData.map(result => result.vw);  // Use whichever data property you want for the series data
-                // this.chartOptions.xaxis.categories = this.historicalData.map(result => new Date(result.t).toLocaleDateString());  // Convert the timestamps to dates
+                chartOptions.series[0].data = this.historical.map(result => parseFloat(result.c).toFixed(2)); // close price
+                chartOptions.xaxis.categories = this.historical.map(result => new Date(result.t).toLocaleDateString());
+
+                this.options = chartOptions;
             } catch (error) {
                 console.error('Error fetching details:', error);
             }
@@ -259,6 +373,7 @@ export default defineComponent({
                     this.toast.success('Successfully added to watchlist!');
                     console.log('Stock added to watchlist');
                     this.reloadSnapshots();
+                    this.$inertia.get('/watchlist');
                 } else {
                     this.toast.error('Item already on watchlist.')
                     console.log('Failed to add to watchlist');
@@ -280,6 +395,7 @@ export default defineComponent({
                     console.log('Stock removed from watchlist');
                     this.removeItemFromWatchlistArray(this.active.ticker);
                     this.reloadSnapshots();
+                    this.$inertia.get('/watchlist');
                 } else {
                     this.toast.error('Item not on watchlist.')
                     console.log('Failed to add to watchlist');
@@ -291,7 +407,7 @@ export default defineComponent({
         removeItemFromWatchlistArray(stockIdToRemove) {
             this.watchlist = this.watchlist.filter(stock => stock.stock_id !== stockIdToRemove);
         },
-        addItemToWatchlistArray(stockIdToAdd) {
+        addItemToWatchlist(stockIdToAdd) {
             this.watchlist.push(stockIdToAdd);
         },
         async buyStock() {
@@ -308,7 +424,7 @@ export default defineComponent({
                     console.log('Stock bought');
                     this.buy_modal = false;
                     this.reloadSnapshots();
-                    // this.$inertia.get('/portfolio');
+                    this.$inertia.get('/portfolio');
                 } else {
                     this.toast.error('Something went wrong buying!')
                     console.log('Failed to buy stock');
@@ -330,7 +446,7 @@ export default defineComponent({
                     console.log('Stock sold');
                     this.sell_modal = false;
                     this.reloadSnapshots();
-                    // this.$inertia.get('/portfolio');
+                    this.$inertia.get('/portfolio');
                 } else {
                     this.toast.error('Something went wrong selling!')
                     console.log('Failed to sell stock');
@@ -347,11 +463,20 @@ export default defineComponent({
             let uniqueStockIds = [...new Set(allStocks.map(item => item.stock_id))];
 
             return uniqueStockIds;
-        }
+        },
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+            }).format(amount);
+        },
+        formatPercentage(value) {
+            // multiply by 100 and fix to 2 decimal places
+            return parseFloat(value).toFixed(2) + '%';
+        },
     },
     watch: {
         date_range: function(newVal, oldVal) {
-                this.getHistorical();
                 this.calculateDateRange(newVal);
         }
     },
@@ -378,8 +503,7 @@ export default defineComponent({
         this.calculateDateRange(this.date_range);
         this.getSnapshot();
         this.options = this.getMainChartOptions();
-        const chart = new ApexCharts(document.getElementById('main-chart'), this.options);
-        chart.render();
+        this.getHistorical();
     }
 })
 
@@ -416,326 +540,21 @@ export default defineComponent({
         <div class="p-4 relative flex flex-col w-full bg-white rounded-lg shadow sm:p-6 xl:p-8">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex-shrink-0">
-                                <span
-                                    class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">$45,385</span>
-                    <h3 class="text-base font-normal text-gray-500 ">Sales this week</h3>
+                                <span v-if="this.company" class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">{{ formatCurrency(this.company.prevDay.c) }}</span>
+                    <h3 class="text-base font-normal text-gray-500 ">Price</h3>
                 </div>
-                <div
-                    class="flex flex-1 justify-end items-center text-base font-bold text-green-500">
-                    12.5%
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                              d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                              clip-rule="evenodd"></path>
-                    </svg>
+                <div v-if="this.company" class="flex flex-1 justify-end items-center text-base font-bold text-green-500">
+                    {{ formatPercentage(this.company.todaysChangePerc) }}
+<!--                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">-->
+<!--                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>-->
+<!--                    </svg>-->
                 </div>
             </div>
-            <div id="main-chart"></div>
-<!--            <apexchart type="line" :options="chartOptions" :series="series"></apexchart>-->
-            <div class="flex justify-between items-center pt-3 mt-5 border-t border-gray-200 sm:pt-6">
-                <div>
-                    <button
-                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:text-gray-900  "
-                        type="button" @click="dropdownVisible = !dropdownVisible" data-dropdown-toggle="weekly-sales-dropdown">{{ this.date_range }}<svg
-                        class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 9l-7 7-7-7"></path>
-                    </svg></button>
-                    <!-- Dropdown menu -->
-                    <div class="z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
-                         id="weekly-sales-dropdown"
-                         v-show="dropdownVisible">
-                        <ul class="py-1" role="none">
-                            <li @click="date_range = 'Last 7 Days'; dropdownVisible = false;">
-                                <p class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Last 7 days</p>
-                            </li>
-                            <li @click="date_range = 'Last 30 Days'; dropdownVisible = false;">
-                                <p class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Last 30 days</p>
-                            </li>
-                            <li @click="date_range = 'Last 90 Days'; dropdownVisible = false;">
-                                <p class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Last 90 days</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <apexchart v-if="this.options" type="line" :options="this.options" :series="this.options.series"></apexchart>
         </div>
         <!-- endregion -->
 
         <!-- region Graph 2 -->
-        <div class="grid grid-cols-1 gap-4 mt-4 w-full md:grid-cols-2 xl:grid-cols-3">
-            <div class="p-4 bg-white rounded-lg shadow sm:p-6 xl:p-8">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                                        <span
-                                            class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">2,340</span>
-                        <h3 class="text-base font-normal text-gray-500 ">New products this
-                            week</h3>
-                    </div>
-                    <div
-                        class="flex flex-1 justify-end items-center ml-5 w-0 text-base font-bold text-green-500">
-                        14.6%
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                  d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div id="new-products-chart"></div>
-                <!-- Card Footer -->
-                <div
-                    class="flex justify-between items-center pt-3 border-t border-gray-200 sm:pt-6">
-                    <div>
-                        <button
-                            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:text-gray-900  "
-                            type="button" data-dropdown-toggle="new-products-dropdown">Last 7 days <svg
-                            class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg></button>
-                        <!-- Dropdown menu -->
-                        <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
-                             id="new-products-dropdown">
-                            <div class="py-3 px-4" role="none">
-                                <p class="text-sm font-medium text-gray-900 truncate "
-                                   role="none">
-                                    Sep 16, 2021 - Sep 22, 2021
-                                </p>
-                            </div>
-                            <ul class="py-1" role="none">
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Yesterday</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Today</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 7 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 30 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 90 days</a>
-                                </li>
-                            </ul>
-                            <div class="py-1" role="none">
-                                <a href="#"
-                                   class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                   role="menuitem">Custom...</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <a href="#"
-                           class="inline-flex items-center p-2 text-xs font-medium uppercase rounded-lg text-primary-700 sm:text-sm hover:bg-gray-100">
-                            Products Report
-                            <svg class="ml-1 w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white rounded-lg shadow sm:p-6 xl:p-8">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                                        <span
-                                            class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">5,355</span>
-                        <h3 class="text-base font-normal text-gray-500 ">Visitors this
-                            week</h3>
-                    </div>
-                    <div
-                        class="flex flex-1 justify-end items-center ml-5 w-0 text-base font-bold text-green-500">
-                        32.9%
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                  d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div id="visitors-chart"></div>
-                <!-- Card Footer -->
-                <div
-                    class="flex items-center justify-between border-t border-gray-200 pt-3 sm:pt-6 mt-3.5">
-                    <div>
-                        <button
-                            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:text-gray-900  "
-                            type="button" data-dropdown-toggle="visitors-dropdown">Last 7 days <svg
-                            class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg></button>
-                        <!-- Dropdown menu -->
-                        <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
-                             id="visitors-dropdown">
-                            <div class="py-3 px-4" role="none">
-                                <p class="text-sm font-medium text-gray-900 truncate "
-                                   role="none">
-                                    Sep 16, 2021 - Sep 22, 2021
-                                </p>
-                            </div>
-                            <ul class="py-1" role="none">
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Yesterday</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Today</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 7 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 30 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 90 days</a>
-                                </li>
-                            </ul>
-                            <div class="py-1" role="none">
-                                <a href="#"
-                                   class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                   role="menuitem">Custom...</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <a href="#"
-                           class="inline-flex items-center p-2 text-xs font-medium uppercase rounded-lg text-primary-700 sm:text-sm hover:bg-gray-100">
-                            Visits Report
-                            <svg class="ml-1 w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white rounded-lg shadow sm:p-6 xl:p-8">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                                        <span
-                                            class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">385</span>
-                        <h3 class="text-base font-normal text-gray-500 ">User signups this
-                            week</h3>
-                    </div>
-                    <div
-                        class="flex flex-1 justify-end items-center ml-5 w-0 text-base font-bold text-red-500">
-                        -2.7%
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                  d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div id="week-signups-chart"></div>
-                <!-- Card Footer -->
-                <div
-                    class="flex justify-between items-center pt-3 border-t border-gray-200 sm:pt-6">
-                    <div>
-                        <button
-                            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:text-gray-900  "
-                            type="button" data-dropdown-toggle="week-signups-dropdown">Last 7 days <svg
-                            class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 9l-7 7-7-7"></path>
-                        </svg></button>
-                        <!-- Dropdown menu -->
-                        <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
-                             id="week-signups-dropdown">
-                            <div class="py-3 px-4" role="none">
-                                <p class="text-sm font-medium text-gray-900 truncate "
-                                   role="none">
-                                    Sep 16, 2021 - Sep 22, 2021
-                                </p>
-                            </div>
-                            <ul class="py-1" role="none">
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Yesterday</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Today</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 7 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 30 days</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                       class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                       role="menuitem">Last 90 days</a>
-                                </li>
-                            </ul>
-                            <div class="py-1" role="none">
-                                <a href="#"
-                                   class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100   "
-                                   role="menuitem">Custom...</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <a href="#"
-                           class="inline-flex items-center p-2 text-xs font-medium uppercase rounded-lg text-primary-700 sm:text-sm hover:bg-gray-100">
-                            Users Report
-                            <svg class="ml-1 w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- endregion -->
-
-        <!-- region Graph 3 -->
         <div class="p-4 mt-4 flex flex-col w-full bg-white rounded-lg shadow sm:p-6 xl:p-8">
             <h3 class="mb-4 text-xl font-bold">General information</h3>
             <dl v-if="this.details" class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
